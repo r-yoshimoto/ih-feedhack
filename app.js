@@ -7,9 +7,10 @@ const logger = require("morgan");
 const express = require("express");
 const hbs = require("hbs");
 const mongoose = require("mongoose");
-// const passport = require("./services/passport")
-const app = express();
+const passport = require("./services/passport")
 const flash = require("connect-flash");
+
+const app = express();
 
 app.use(flash());
 
@@ -34,9 +35,15 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
 app.use(express.static(path.join(__dirname, "public")));
 
-// app.use(passport)
+app.use(passport)
 
 const siteRoutes = require("./routes/index");
 app.use("/", siteRoutes);
+
+const authRoutes = require("./routes/auth");
+app.use("/", authRoutes);
+
+const inboxRoutes = require("./routes/inbox");
+app.use("/inbox", inboxRoutes);
 
 module.exports = app;
