@@ -22,9 +22,7 @@ router.get("/login", (req, res, next) => {
   });
 });
 
-router.post(
-  "/login",
-  passport.authenticate("local", {
+router.post("/login", passport.authenticate("local", {
     successRedirect: "/inbox",
     failureRedirect: "/login",
     failureFlash: true,
