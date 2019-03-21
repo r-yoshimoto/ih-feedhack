@@ -64,7 +64,9 @@ app.use(passport.session());
 
 app.use((req, res, next) => {
   if (req.isAuthenticated()) {
+    req.user.name = req.user.fullName.split(" ")[0]
     res.locals.currentUser = req.user;
+    
   }
 
   next();

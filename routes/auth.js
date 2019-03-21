@@ -13,7 +13,7 @@ router.get("/login", (req, res, next) => {
       "error",
       `You are already logged in, but you can logout <a href="/logout?=fool">clicking here</a> and login again if needed.`
     );
-    res.send("should point later to INBOX");
+    res.redirect("/inbox");
   }
 
   res.render("auth/login", {
