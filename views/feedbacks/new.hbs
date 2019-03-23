@@ -1,14 +1,14 @@
-<form class="col-md-6 offset-md-3" id="form" action="/feedbacks/create" method="POST">
+<form class="col-md-6 offset-md-3" id="form" action="/inbox/create" method="POST">
 <h1>Create your feedback</h1>
 
-{{#if msgError}}
-      <div class="alert alert-danger">{{ msgError }}</div>
+{{#if error}}
+      <div class="alert alert-danger">{{ error }}</div>
     {{/if}}
     
 
   <div class="form-group">
-    <label for="email">Person's email</label>
-    <input name="email" type="text" class="form-control" id="email" aria-describedby="nameHelp" placeholder="Enter the person's e-mail">
+    <label for="to">Person's email</label>
+    <input name="to" type="email" class="form-control" id="to" placeholder="Enter the person's e-mail">
   </div>
 
   <div class="form-group">
@@ -18,7 +18,7 @@
 
   <div class="form-group">
     <label for="type">Select the type of your feedback</label><br>
-    <select multiple class="form-control" name='type'>
+    <select class="form-control" name='hierarchy'>
         <option value="Downward">Downward</option>
         <option value="Upward">Upward</option>
         <option value="Pair">Pair</option>
@@ -27,21 +27,16 @@
  </div>
 
 <div class="form-check">
-    <input type="checkbox" class="form-check-input" value="Anonymous" id="exampleCheck1">
+    <input checked type="checkbox" class="form-check-input" value="Anonymous" name="type">
     <label class="form-check-label" for="exampleCheck1">Send as anonymous</label>
 </div>
 
 
 
-  <button class="btn btn-primary">Save</button>
-
-</form>
-
-<form action="/feedbacks/send" method="POST">
-  
+  <button class="btn btn-primary" type="submit" name="action" value="Draft">Save as Draft</button>
   <button class="btn btn-primary">Send</button>
 
-</form>
 
+</form>
 
 

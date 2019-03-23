@@ -3,6 +3,7 @@ const router = express.Router();
 const ensureLogin = require("connect-ensure-login");
 const Feedback = require("../models/feedback");
 const User = require("../models/users");
+const app = express();
 
 app.use(ensureLogin.ensureLoggedIn());
 
@@ -14,12 +15,41 @@ router.get("/", (req, res, next) => {
 });
 
 router.get("/create", (req, res, next) => {
-  res.render("feedack/new");
+  res.render("feedbacks/new");
 });
 
 router.post("/create", (req, res, next) => {
-  const { comment, type, hierarchy, to } = req.body;
-  const from = req.user_id;
+  
+  if (req.body.action === "Draft"){
+  const { comments, type, hierarchy, to } = req.body;
+  const from = req.user._id;
+
+  const newFeedback = new Feedback ({
+    comments,
+    type,
+    hierarchy,
+    emailDrafTo: to,
+    from,
+    status: "Draft"
+  })
+
+  newFeedback
+    .save()
+    .then(feedback => {
+      req.flash(
+        "success",
+        "Your draft has been saved."
+      );
+      res.redirect("/inbox");
+    })
+    .catch(err => {
+      throw new Error(err);
+    });
+    return
+  }
+
+  const { comments, type, hierarchy, to } = req.body;
+  const from = req.user._id;
 
   User.findOne({ email: to })
     .then(userTo => {
@@ -32,11 +62,12 @@ router.post("/create", (req, res, next) => {
           .save()
           .then(userNew => {
             const newFeedback = new Feedback({
-              comment,
+              comments,
               type,
               hierarchy,
               to: userNew._id,
-              from
+              from,
+              status: "Delivered",
             });
 
             newFeedback
@@ -46,7 +77,7 @@ router.post("/create", (req, res, next) => {
                   "success",
                   "The user does not exist. But we have storage your feedback."
                 );
-                req.redirect("/inbox");
+                res.redirect("/inbox");
               })
               .catch(err => {
                 throw new Error(err);
@@ -57,11 +88,12 @@ router.post("/create", (req, res, next) => {
           });
       } else {
         const newFeedback = new Feedback({
-          comment,
+          comments,
           type,
           hierarchy,
           to: userTo._id,
-          from
+          from,
+          status: "Delivered",
         });
 
         newFeedback.save().then(feedback => {
@@ -69,13 +101,14 @@ router.post("/create", (req, res, next) => {
             "success",
             "Your feedback has been send."
           );
-          req.redirect("/inbox");
+          res.redirect("/inbox");
         }).catch(err => {
           throw new Error(err);
         })
       }
     })
     .catch();
-});
+
+})
 
 module.exports = router;
