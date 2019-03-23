@@ -359,7 +359,7 @@ router.post("/edit-profile/change-password", ensureLogin.ensureLoggedIn(), (req,
           to: user.email,
           subject: "[PASSWORD CHANGE] E-mail confirmation required",
           // text: message,
-          html: `Please click <a href="${process.env.APP_URI}/confirm/${confirmationCode}">here</a>
+          html: `Please click <a href="${process.env.APP_URI}/confirm/${emailConfirmationCode}">here</a>
           `
         })
         .then(info => console.log("nodemailer success -->", info))
