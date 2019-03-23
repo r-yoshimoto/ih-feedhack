@@ -6,7 +6,15 @@ const feedbackSchema = new Schema(
         comments: String,
         to: { type: Schema.Types.ObjectId, ref: 'User' },
         emailDrafTo: String,
+        toDiscardedStatus: {
+            type: Boolean,
+            default: false
+        },
         from: { type: Schema.Types.ObjectId, ref: 'User' },
+        fromDiscardedStatus: {
+            type: Boolean,
+            default: false
+        },
         status: {
             type: String,
             enum: ["Draft", "Delivered", "Accepted", "Refused", "Read"],
