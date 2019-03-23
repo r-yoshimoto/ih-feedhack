@@ -12,6 +12,7 @@ const flash = require("connect-flash");
 
 const app = express();
 
+
 app.use(flash());
 
 mongoose
@@ -36,6 +37,23 @@ app.set("view engine", "hbs");
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(passport)
+
+hbs.registerHelper("select", function(value, options) {
+  return options.fn(this)
+    .split('\n')
+    .map(function(v) {
+      var t = 'value="' + value + '"'
+      return ! RegExp(t).test(v) ? v : v.replace(t, t + ' selected="selected"')
+    })
+    .join('\n')
+})
+
+hbs.registerHelper("check", function(value, test) {
+ 
+  if (value == "Signed"){ return "unchecked" }
+  if (value == "Anonymous" || value == undefined){ return "checked"}
+
+})
 
 const siteRoutes = require("./routes/index");
 app.use("/", siteRoutes);

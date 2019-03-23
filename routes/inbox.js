@@ -18,37 +18,88 @@ router.get("/create", (req, res, next) => {
   res.render("feedbacks/new");
 });
 
-router.post("/create", (req, res, next) => {
-  
-  if (req.body.action === "Draft"){
-  const { comments, type, hierarchy, to } = req.body;
-  const from = req.user._id;
-
-  const newFeedback = new Feedback ({
-    comments,
-    type,
-    hierarchy,
-    emailDrafTo: to,
-    from,
-    status: "Draft"
-  })
-
-  newFeedback
-    .save()
+router.get("/edit/:feedbackId", (req, res, next) => {
+  Feedback.findById(req.params.feedbackId)
     .then(feedback => {
-      req.flash(
-        "success",
-        "Your draft has been saved."
-      );
-      res.redirect("/inbox");
+      if (feedback.from == req.user.id) {
+        res.render("feedbacks/update", { feedback: feedback, to: feedback.emailDrafTo});
+      }
     })
     .catch(err => {
       throw new Error(err);
     });
-    return
+});
+
+router.post("/create", (req, res, next) => {
+  if (req.body.action === "Draft") {
+    const { comments, type, hierarchy, to } = req.body;
+    const from = req.user._id;
+    const id = req.body._id;
+
+    if (id == undefined) {
+      const newFeedback = new Feedback({
+        comments,
+        type,
+        hierarchy,
+        emailDrafTo: to,
+        from,
+        status: "Draft"
+      });
+
+      newFeedback
+        .save()
+        .then(feedback => {
+          req.flash("success", "Your draft has been saved.");
+          res.redirect("/inbox");
+        })
+        .catch(err => {
+          throw new Error(err);
+        });
+      return;
+    } else {
+      const updateFeedback = {
+        comments,
+        type,
+        hierarchy,
+        to,
+        from,
+        status: "Draft"
+      };
+
+      Feedback.findByIdAndUpdate(
+        { _id: req.user._id },
+        { $set: updateFeedback },
+        { new: true }
+      )
+        .then(feedback => {
+          req.flash("success", "Your draft has been saved.");
+          res.redirect("/inbox");
+        })
+        .catch();
+    }
   }
 
-  const { comments, type, hierarchy, to } = req.body;
+  const { comments, hierarchy, to } = req.body;
+
+  req.body.type == null ? (type = "Signed") : (type = "Anonymous");
+
+  if (comments == "" || to == "") {
+    req.flash(
+      "error",
+      "In order to send your feedback we need a that the recipient and comment to be filled."
+    );
+
+    res.render("feedbacks/new", {
+      error: req.flash("error"),
+      comments,
+      type,
+      hierarchy,
+      to
+    });
+
+    return;
+  }
+
   const from = req.user._id;
 
   User.findOne({ email: to })
@@ -67,7 +118,7 @@ router.post("/create", (req, res, next) => {
               hierarchy,
               to: userNew._id,
               from,
-              status: "Delivered",
+              status: "Delivered"
             });
 
             newFeedback
@@ -93,22 +144,21 @@ router.post("/create", (req, res, next) => {
           hierarchy,
           to: userTo._id,
           from,
-          status: "Delivered",
+          status: "Delivered"
         });
 
-        newFeedback.save().then(feedback => {
-          req.flash(
-            "success",
-            "Your feedback has been send."
-          );
-          res.redirect("/inbox");
-        }).catch(err => {
-          throw new Error(err);
-        })
+        newFeedback
+          .save()
+          .then(feedback => {
+            req.flash("success", "Your feedback has been send.");
+            res.redirect("/inbox");
+          })
+          .catch(err => {
+            throw new Error(err);
+          });
       }
     })
     .catch();
-
-})
+});
 
 module.exports = router;
