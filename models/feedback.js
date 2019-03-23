@@ -5,16 +5,17 @@ const feedbackSchema = new Schema(
     {
         comments: String,
         to: { type: Schema.Types.ObjectId, ref: 'User' },
+        emailDrafTo: String,
         from: { type: Schema.Types.ObjectId, ref: 'User' },
         status: {
             type: String,
-            enum: ["Draft", "Delivered", "Accepted", "Refused", "Readen"],
+            enum: ["Draft", "Delivered", "Accepted", "Refused", "Read"],
             default: "Draft"
         },
         type: {
             type: String,
             enum: ["Anonymous", "Signed"],
-            default: "Anonymous"
+            default: "Signed"
         },
         hierarchy: {
             type: String,
