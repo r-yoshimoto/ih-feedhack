@@ -7,12 +7,12 @@ const app = express();
 
 app.use(ensureLogin.ensureLoggedIn());
 
-router.get("/", (req, res, next) => {
-  res.render("inbox", {
-    error: req.flash("error"),
-    success: req.flash("success")
-  });
-});
+// router.get("/", (req, res, next) => {
+//   res.render("inbox", {
+//     error: req.flash("error"),
+//     success: req.flash("success")
+//   });
+// });
 
 router.get("/create", (req, res, next) => {
   res.render("feedbacks/new");
@@ -160,5 +160,34 @@ router.post("/create", (req, res, next) => {
     })
     .catch();
 });
+
+//Bruno
+
+router.get("/", (req, res, next) => {
+  var currentUser = req.user._id;
+  Feedback.find({ $and: [{to: currentUser}, {toDiscardedStatus: false}, { $or :[{status: "Delivered"}, {status:"Accepted"}, {status:"Read"}]}]})
+    .populate('from')
+    .then(feedback =>{
+      // res.send(feedback);
+      res.render("inbox", {feedback: feedback});
+    })
+    .catch(error => {
+			console.log(error);
+		});
+	
+})
+
+// router.get("/:feedbackId", (req, res, next) => {
+//   Feedback.findById(req.params.feedbackId)
+//     .then(feedback => {
+//       if (feedback.to == req.user.id) {
+//         res.render("feedbacks/view", { feedback: feedback, to: feedback.emailDrafTo});
+//       }
+//     })
+//     .catch(err => {
+//       throw new Error(err);
+//     });
+// });
+
 
 module.exports = router;
