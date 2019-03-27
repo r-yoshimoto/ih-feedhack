@@ -22,7 +22,10 @@ router.get("/edit/:feedbackId", (req, res, next) => {
   Feedback.findById(req.params.feedbackId)
     .then(feedback => {
       if (feedback.from == req.user.id) {
-        res.render("feedbacks/update", { feedback: feedback, to: feedback.emailDrafTo});
+        res.render("feedbacks/update", {
+          feedback: feedback,
+          to: feedback.emailDraftTo
+        });
       }
     })
     .catch(err => {
@@ -41,7 +44,7 @@ router.post("/create", (req, res, next) => {
         comments,
         type,
         hierarchy,
-        emailDrafTo: to,
+        emailDraftTo: to,
         from,
         status: "Draft"
       });
@@ -61,21 +64,22 @@ router.post("/create", (req, res, next) => {
         comments,
         type,
         hierarchy,
-        to,
+        emailDraftTo: to,
         from,
         status: "Draft"
       };
 
       Feedback.findByIdAndUpdate(
-        { _id: req.user._id },
+        { _id: id },
         { $set: updateFeedback },
         { new: true }
       )
         .then(feedback => {
-          req.flash("success", "Your draft has been saved.");
+          req.flash("success", "Your draft has updated saved.");
           res.redirect("/inbox");
         })
         .catch();
+      return;
     }
   }
 
@@ -101,61 +105,127 @@ router.post("/create", (req, res, next) => {
   }
 
   const from = req.user._id;
+  const id = req.body._id;
 
-  User.findOne({ email: to })
-    .then(userTo => {
-      if (userTo == null) {
-        const newUser = new User({
-          email: to
-        });
+  let newFeedback = new Feedback({
+    emailDraftTo: "",
+    comments,
+    type,
+    hierarchy,
+    from,
+    status: "Delivered"
+  });
 
-        newUser
-          .save()
-          .then(userNew => {
-            const newFeedback = new Feedback({
-              comments,
-              type,
-              hierarchy,
-              to: userNew._id,
-              from,
-              status: "Delivered"
-            });
-
-            newFeedback
-              .save()
-              .then(feedback => {
-                req.flash(
-                  "success",
-                  "The user does not exist. But we have storage your feedback."
-                );
-                res.redirect("/inbox");
-              })
-              .catch(err => {
-                throw new Error(err);
+  Feedback.findById(id)
+    .then(feedback => {
+      if (feedback == null) {
+        User.findOne({ email: to })
+          .then(userTo => {
+            if (userTo == null) {
+              const newUser = new User({
+                email: to
               });
-          })
-          .catch(err => {
-            throw new Error(err);
-          });
-      } else {
-        const newFeedback = new Feedback({
-          comments,
-          type,
-          hierarchy,
-          to: userTo._id,
-          from,
-          status: "Delivered"
-        });
 
-        newFeedback
-          .save()
-          .then(feedback => {
-            req.flash("success", "Your feedback has been send.");
-            res.redirect("/inbox");
+              newUser
+                .save()
+                .then(userNew => {
+                  newFeedback.to = userNew._id;
+
+                  newFeedback
+                    .save()
+                    .then(feedback => {
+                      req.flash(
+                        "success",
+                        "The user does not exist. But we have storage your feedback."
+                      );
+                      res.redirect("/inbox");
+                    })
+                    .catch(err => {
+                      throw new Error(err);
+                    });
+                })
+                .catch(err => {
+                  throw new Error(err);
+                });
+            } else {
+
+              newFeedback.to = userTo._id;
+                newFeedback.save()
+                  .then(feedback => {
+                    if (userTo.status == "Pending") {
+                      req.flash(
+                        "success",
+                        "The user does not exist. But we have storage your feedback."
+                      );
+                      res.redirect("/inbox");
+                    }
+
+                    req.flash("success", "Your feedback has been send.");
+                    res.redirect("/inbox");
+                  })
+                  .catch(err => {
+                    throw new Error(err);
+                  });
+            }
           })
-          .catch(err => {
-            throw new Error(err);
-          });
+          .catch();
+      } else {
+        User.findOne({ email: to })
+          .then(userTo => {
+            if (userTo == null) {
+              const newUser = new User({
+                email: to
+              });
+
+              newUser
+                .save()
+                .then(userNew => {
+                  newFeedback.to = userNew._id;
+
+                  Feedback.findByIdAndUpdate(
+                    { _id: id },
+                    { $set: newFeedback },
+                    { new: true }
+                  )
+                    .then(feedback => {
+                      req.flash(
+                        "success",
+                        "The user does not exist. But we have storage your feedback."
+                      );
+                      res.redirect("/inbox");
+                    })
+                    .catch(err => {
+                      throw new Error(err);
+                    });
+                })
+                .catch(err => {
+                  throw new Error(err);
+                });
+            } else {
+              (newFeedback.to = userTo._id),
+                Feedback.findByIdAndUpdate(
+                  { _id: id },
+                  { $set: newFeedback },
+                  { new: true }
+                )
+                  .then(feedback => {
+                    if (userTo.status == "Pending") {
+                      req.flash(
+                        "success",
+                        "The user does not exist. But we have storage your feedback."
+                      );
+                      res.redirect("/inbox");
+                    }
+
+                    req.flash("success", "Your feedback has been send.");
+                    res.redirect("/inbox");
+                  })
+                  .catch(err => {
+                    throw new Error(err);
+                  });
+            }
+          })
+          .catch();
       }
     })
     .catch();

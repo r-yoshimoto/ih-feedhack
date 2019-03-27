@@ -7,6 +7,13 @@ const passport = require("passport");
 const User = require("../models/users");
 const transporter = require("../services/nodemailer");
 
+function correctName(fullName) {
+  return fullName.split(" ").map(word => {
+    if (word.length > 2) { return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() }
+    else { return word.toLowerCase() }
+  }).join(" ");
+}
+
 router.get("/login", (req, res, next) => {
   if (req.user) {
     req.flash(
@@ -44,6 +51,8 @@ router.get("/sign-up", (req, res, next) => {
 router.post("/sign-up", (req, res, next) => {
   const { email, password, fullName } = req.body;
 
+
+
   if (fullName == "" || email == "" || password == "") {
     res.render("auth/sign-up", {
       error: `Name, e-mail and password can't be empty.`
@@ -77,7 +86,7 @@ router.post("/sign-up", (req, res, next) => {
       const newUser = new User({
         email,
         password: hashPass,
-        fullName,
+        fullName: correctName(fullName),
         emailConfirmationCode
       });
 
@@ -286,7 +295,7 @@ router.post("/edit-profile", ensureLogin.ensureLoggedIn(), (req, res, next) => {
     return;
   }
 
-  const updateUser = { email, fullName };
+  const updateUser = { email, fullName: correctName(fullName) };
 
   User.findOneAndUpdate(
     { _id: req.user._id },
