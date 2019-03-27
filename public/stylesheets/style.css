@@ -1,0 +1,66 @@
+@import url("https://fonts.googleapis.com/css?family=Montserrat");
+
+body {
+  padding-top: 100px;
+  font-family: Montserrat !important;
+  color: #333333;
+  overflow-x: hidden !important;
+}
+
+.btn-primary {
+  background-color: #6fcf97;
+  border: 0;
+}
+
+.btn-primary:hover {
+  background-color: #219653;
+  border: 0;
+}
+
+.btn-primary:active {
+  background-color: #27ae60 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+nav {
+  justify-content: flex-start;
+}
+
+.nav-link {
+  color: #333333;
+  font-size: 24px;
+}
+
+.welcome-1 {
+  left: 50px;
+  top: 142px;
+
+  background: url(/images/alesia-kazantceva-283287-unsplash.png);
+  background-repeat: no-repeat;
+}
+
+.welcome-4 {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 60px;
+  line-height: normal;
+
+  text-shadow: 0px 4px 4px rgba(242, 242, 242, 0.5);
+}
+
+.welcome-5 {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 26px;
+
+  color: #000000;
+}
+
+.welcome-6 img {
+  width: 100%;
+  height: auto;
+}
