@@ -38,6 +38,15 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(passport)
 
+
+
+hbs.registerHelper('ifisDelivered', function(value, options) {
+  if(value == "Delivered") {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
 hbs.registerHelper("select", function(value, options) {
   return options.fn(this)
     .split('\n')

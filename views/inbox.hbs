@@ -1,4 +1,47 @@
-<h1>Feedback Inbox</h1>
+<h1>Inboxa</h1>
+
+{{#each feedback}}
+
+{{#ifisDelivered this.status}}
+<h2>Hello</h2>
+{{#ifisAnonymous}}
+<h2><a href="/feedback/{{_id}}">New feedback from an Anonymous</a></h2>
+{{else}}
+<h2><a href="/feedback/{{_id}}">New feedback signed by {{this.from.fullName}}</a></h2>
+{{/ifisAnonymous}}
+
+
+{{else}}
+
+<form action="/feedback/accept" method="POST">
+<input type="hidden" name="id" value="{{_id}}">
+<button type="submit" class="edit-button-red">Accept</button>
+<button type="submit" class="edit-button-red">Refuse</button>
+</form>
+{{/ifisDelivered}}
+
+
+
+<h2><a href="/feedback/{{_id}}">{{userFrom}}  {{comments}}</a></h2>
+<form action="/feedback/discard" method="POST">
+<input type="hidden" name="id" value="{{_id}}">
+<button type="submit" class="edit-button-red">Discard</button>
+</form>
+
+
+<h2><a href="/feedback/{{_id}}">{{this}}</a></h2>
+{{/each}}
+
+
+{{!-- /<p><a href="/course/delete?course_id={{_id}}" class="edit-button-red">Delete</a></p> --}}
+
+
+
+
+
+
+
+{{!-- <h1>Feedback Inbox</h1>
 
   {{#if error}}
   <div class="alert alert-danger">{{{ error }}}</div>
@@ -8,4 +51,4 @@
   <div class="alert alert-success">{{ success }}</div>
   {{/if}}
 
-<p>You are logged in.</p>
+<p>You are logged in.</p> --}}
