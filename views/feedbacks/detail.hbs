@@ -1,0 +1,47 @@
+<form class="col-md-6 offset-md-3" id="form" action="" method="POST">
+  <h1>Edit your feedback</h1>
+
+  {{#if error}}
+  <div class="alert alert-danger">{{ error }}</div>
+  {{/if}}
+
+{{#with feedback}}
+
+  <input type="hidden" name="_id" value="{{_id}}" >
+
+  <div class="form-group">
+    <label for="to">Person's email</label>
+    <input value="{{../to}}" name="to" type="email" class="form-control" id="to" placeholder="Enter the person's e-mail">
+  </div>
+
+  <div class="form-group">
+    <label for="comments">Feedback</label>
+    <br><textarea name="comments" class="form-control"
+      placeholder="Write a constructive feedback">{{comments}}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="type">Select the type of your feedback</label><br>
+    <select class="form-control" name='hierarchy'>
+      {{#select hierarchy }}
+      <option value="Downward">Downward</option>
+      <option value="Upward">Upward</option>
+      <option value="Pair">Pair</option>
+      <option value="None of above">None of above</option>
+      {{/select}}
+    </select>
+  </div>
+
+  <div class="form-check">
+    <input {{#check type}}{{/check}} type="checkbox" class="form-check-input" value="Anonymous" name="type">
+    <label class="form-check-label" for="exampleCheck1">Send as anonymous</label>
+  </div>
+
+
+
+  <button class="btn btn-primary" type="submit" name="action" value="Draft">Save as Draft</button>
+  <button class="btn btn-primary">Send</button>
+
+{{/with}}
+
+</form>

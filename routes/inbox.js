@@ -247,17 +247,53 @@ router.get("/", (req, res, next) => {
 	
 })
 
-// router.get("/:feedbackId", (req, res, next) => {
-//   Feedback.findById(req.params.feedbackId)
-//     .then(feedback => {
-//       if (feedback.to == req.user.id) {
-//         res.render("feedbacks/view", { feedback: feedback, to: feedback.emailDrafTo});
-//       }
-//     })
-//     .catch(err => {
-//       throw new Error(err);
-//     });
-// });
+router.post("/discard", (req, res, next) => {
+  let feedbackId = req.body.id;
+  Feedback.findByIdAndUpdate({ _id: feedbackId }, {$set: {toDiscardedStatus: true}})
+  .then(feedback => {
+    res.redirect("/inbox")
+  })
+  .catch(err => {
+    throw new Error(err);
+  })
+});
+
+router.post("/accept", (req, res, next) => {
+  let feedbackId = req.body.id;
+  Feedback.findByIdAndUpdate({ _id: feedbackId }, {$set: {status: "Accepted"}})
+  .then(feedback => {
+    res.redirect("/inbox")
+  })
+  .catch(err => {
+    throw new Error(err);
+  })
+});
+
+router.post("/refuse", (req, res, next) => {
+  let feedbackId = req.body.id;
+  Feedback.findByIdAndUpdate({ _id: feedbackId }, {$set: {status: "Refused"}})
+  .then(feedback => {
+    res.redirect("/inbox")
+  })
+  .catch(err => {
+    throw new Error(err);
+  })
+});
+
+
+
+
+router.get("/:feedbackId", (req, res, next) => {
+  Feedback.findById(req.params.feedbackId)
+    .then(feedback => {
+      if (feedback.to == req.user.id) {
+        res.render("feedbacks/detail", { feedback: feedback, to: feedback.emailDrafTo});
+      }
+    })
+    .catch(err => {
+      throw new Error(err);
+    });
+});
 
 
 module.exports = router;
