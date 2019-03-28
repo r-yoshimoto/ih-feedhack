@@ -47,6 +47,13 @@ hbs.registerHelper('ifisDelivered', function(value, options) {
   return options.inverse(this);
 });
 
+hbs.registerHelper('ifisAnonymous', function(value, options) {
+  if(value == "Anonymous") {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
 hbs.registerHelper("select", function(value, options) {
   return options.fn(this)
     .split('\n')
