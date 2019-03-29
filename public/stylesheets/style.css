@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Montserrat");
+@import url('https://fonts.googleapis.com/css?family=Montserrat:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i');
 
 body {
   padding-top: 100px;
@@ -63,4 +63,73 @@ nav {
 .welcome-6 img {
   width: 100%;
   height: auto;
+}
+
+.benefit-img {
+  text-align: center;
+}
+
+.benefit-title{
+  font-family: Montserrat;
+font-style: normal;
+font-weight: bold;
+font-size: 20px;
+line-height: normal;
+text-align: center;
+
+color: #000000;
+}
+
+.benefit-description {
+  font-family: Montserrat;
+font-style: normal;
+font-weight: normal;
+font-size: 20px;
+line-height: normal;
+text-align: center;
+
+color: #000000;
+}
+
+.bio-img {
+  text-align: center;
+}
+
+.bio-name {
+  font-family: Montserrat;
+font-style: normal;
+font-weight: bold;
+font-size: 20px;
+line-height: normal;
+
+color: #000000;
+}
+
+.bio-description {
+  font-family: Montserrat;
+font-style: italic;
+font-weight: 300;
+font-size: 20px;
+line-height: normal;
+
+color: #000000;
+}
+
+.footer{
+  background: #F2F2F2;
+}
+
+.footer-quote {
+  font-family: Montserrat;
+font-style: italic;
+font-weight: 200;
+font-size: 16px;
+line-height: normal;
+
+color: #000000;
+
+}
+
+span.nav-link{
+  cursor:pointer;
 }
