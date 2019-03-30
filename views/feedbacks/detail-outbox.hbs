@@ -13,14 +13,9 @@
 
 
   <div class="form-group">
+    
+    <label for="to">to: {{to.fullName}}</label>
 
-    {{#ifisAnonymous type}}
-
-    <label for="to">From an Anonymous</label>
-    {{else}}
-    <label for="to">Signed by {{from.fullName}}</label>
-
-     {{/ifisAnonymous}}
   </div>
 
   <div class="form-group">
@@ -30,7 +25,7 @@
   </div>
 
   <div class="form-group">
-    <label for="type">The type of the received feedback</label><br>
+    <label for="type">The type of the sent feedback</label><br>
     <select class="form-control" name='hierarchy' disabled>
       {{#select hierarchy }}
       <option value="Downward">Downward</option>
@@ -41,12 +36,13 @@
     </select>
   </div>
 
-  {{!-- <div class="form-check">
+  <div class="form-check">
     <input {{#check type}}{{/check}} type="checkbox" class="form-check-input" value="Anonymous" name="type">
-    <label class="form-check-label" for="exampleCheck1">Send as anonymous</label>
-  </div> --}}
+    <label class="form-check-label" for="exampleCheck1" >Send as anonymous</label>
+  </div>
 </form>
-<form action="/inbox/discard" method="POST">
+
+<form action="/inbox/outbox/discard" method="POST">
 <input type="hidden" name="id" value="{{_id}}">
 <button type="submit" class="btn btn-danger btn-sm">Discard</button>
 </form>
