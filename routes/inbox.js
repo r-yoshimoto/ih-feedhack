@@ -320,11 +320,12 @@ router.post("/refuse", (req, res, next) => {
 
 router.get("/:feedbackId", (req, res, next) => {
   Feedback.findById(req.params.feedbackId)
+    .populate('from')
     .then(feedback => {
       if (feedback.to == req.user.id) {
         res.render("feedbacks/detail", {
           feedback: feedback,
-          to: feedback.emailDrafTo
+          to: feedback.emailDraftTo
         });
       }
     })
