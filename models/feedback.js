@@ -5,7 +5,7 @@ const feedbackSchema = new Schema(
     {
         comments: String,
         to: { type: Schema.Types.ObjectId, ref: 'User' },
-        emailDrafTo: String,
+        emailDraftTo: String,
         toDiscardedStatus: {
             type: Boolean,
             default: false
