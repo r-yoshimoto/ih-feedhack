@@ -43,6 +43,13 @@ router.get("/logout", ensureLogin.ensureLoggedIn(), (req, res) => {
 });
 
 router.get("/sign-up", (req, res, next) => {
+  if (req.user) {
+    req.flash(
+      "error",
+      `You are already registered, but you can logout <a href="/logout?=fool">clicking here</a> and register with another e-mail.`
+    );
+    res.redirect("/inbox")};
+  
   res.render("auth/sign-up", {
     error: req.flash("error")
   });
@@ -383,5 +390,51 @@ router.post("/edit-profile/change-password", ensureLogin.ensureLoggedIn(), (req,
 
 });
 
+
+router.get("/invite", (req, res, next) => {
+  res.render("invite")
+})
+
+router.post("/invite", (req,res,next) => {
+  let {emailList, comment} = req.body
+ 
+  emailList.split(',').forEach(email => {
+    User.findOne({email: email}).then(user => {
+      if (user == null) {
+        const newUser = new User({
+          email
+        });
+
+        newUser
+          .save()
+          .then(user => {
+            transporter
+        .sendMail({
+          from: "ih-feedback.herokuapp.com",
+          to: user.email,
+          subject: "Your friend invited you to FEEDBACK!",
+          html: `To accept the invitation please click <a href="${process.env.APP_URI}/sign-up">here</a>
+          <br> Your friend wrote: ${comment}`
+        })
+        .then(info => console.log("nodemailer success -->", info))
+        .catch(error => console.log(error));
+      })
+          .catch(err => {
+                throw new Error(err);
+              });
+          
+      } return
+    }).catch(err => {
+      throw new Error(err);
+    })
+    
+    req.flash("success", "The invitations are underway!")
+    res.redirect("/inbox")
+  })
+  
+  
+   
+ })
+ 
 
 module.exports = router;

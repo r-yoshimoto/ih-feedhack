@@ -13,7 +13,8 @@
   <link rel="stylesheet" href="/stylesheets/style.css" />
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
     integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-
+  <link rel="stylesheet" href="/stylesheets/bootstrap-tokenfield.min.css">
+  <link rel="stylesheet" href="/stylesheets/tokenfield-typeahead.min.css"
 </head>
 
 <body>
@@ -71,13 +72,14 @@
         <div class="nav-link">Hi, {{currentUser.name}}</div>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/inbox">Inbox</a>
+        <a class="nav-link" href="/inbox">Inbox {{#if currentUser.counter}}<span class="badge badge-secondary">{{currentUser.counter}}</span>{{/if}}</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/edit-profile">Edit Profile</a>
       </li>
     </ul>
 
+    <a href="/invite">Get Feedback!</a>
     <a class="mx-5 btn btn-primary btn-lg" href="/inbox/create" role="button">New Feedback</a>
     <a class="mx-1 btn btn-primary btn-lg" href="/logout" role="button">Logout</a>
 
@@ -113,6 +115,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
+  <script src="/javascripts/bootstrap-tokenfield.js"></script>
   <script src="/javascripts/script.js"></script>
 
 </body>
