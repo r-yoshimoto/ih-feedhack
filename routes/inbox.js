@@ -322,6 +322,69 @@ router.post("/refuse", (req, res, next) => {
     });
 });
 
+router.get("/outbox", (req, res, next) => {
+  var currentUser = req.user._id;
+  Feedback.find({
+    $and: [
+      { from: currentUser },
+      { fromDiscardedStatus: false },
+      {
+        $or: [
+          { status: "Delivered" },
+          { status: "Accepted" },
+          { status: "Refused" },
+          { status: "Read" }
+        ]
+      }
+    ]
+  })
+    .populate('to')
+    .then(feedback => {
+      // res.send(feedback);
+      res.render("outbox", { feedback: feedback,
+        error: req.flash("error"),
+        success: req.flash("success")
+         });
+    })
+    .catch(error => {
+      console.log(error);
+    });
+});
+
+
+
+router.post("/outbox/discard", (req, res, next) => {
+  let feedbackId = req.body.id;
+  Feedback.findByIdAndUpdate(
+    { _id: feedbackId },
+    { $set: { fromDiscardedStatus: true } }
+  )
+    .then(feedback => {
+      res.redirect("/inbox/outbox");
+    })
+    .catch(err => {
+      throw new Error(err);
+    });
+});
+
+
+router.get("/outbox/:feedbackId", (req, res, next) => {
+  Feedback.findById(req.params.feedbackId)
+    .populate('to')
+    .then(feedback => {
+      if (feedback.from == req.user.id) {
+        
+        res.render("feedbacks/detail-outbox", {
+          feedback: feedback,
+          to: feedback.emailDraftTo
+        });
+      }
+    })
+    .catch(err => {
+      throw new Error(err);
+    });
+});
+
 router.get("/:feedbackId", (req, res, next) => {
   Feedback.findById(req.params.feedbackId)
     .then(feedback => {
@@ -336,5 +399,12 @@ router.get("/:feedbackId", (req, res, next) => {
       throw new Error(err);
     });
 });
+
+// router.get("/outbox", (req, res, next) =>{
+//   res.render("outbox");
+// })
+
+
+
 
 module.exports = router;
