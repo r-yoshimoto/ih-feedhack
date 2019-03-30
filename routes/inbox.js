@@ -33,56 +33,71 @@ router.get("/edit/:feedbackId", (req, res, next) => {
     });
 });
 
-router.post("/create", (req, res, next) => {
-  if (req.body.action === "Draft") {
-    const { comments, type, hierarchy, to } = req.body;
-    const from = req.user._id;
-    const id = req.body._id;
-
-    if (id == undefined) {
-      const newFeedback = new Feedback({
-        comments,
-        type,
-        hierarchy,
-        emailDraftTo: to,
-        from,
-        status: "Draft"
+router.post("/delete", (req, res, next) => {
+  if (req.body._id == null) {
+    req.flash("success", "Draft discarded.")
+    res.redirect("/inbox");
+  } else {
+    Feedback.findByIdAndDelete(req.body._id)
+      .then(feedback => {
+        req.flash("success", "Your Feedback draft has been deleted.");
+        res.redirect("/inbox")
+      })
+      .catch(err => {
+        throw new Error(err);
       });
-
-      newFeedback
-        .save()
-        .then(feedback => {
-          req.flash("success", "Your draft has been saved.");
-          res.redirect("/inbox");
-        })
-        .catch(err => {
-          throw new Error(err);
-        });
-      return;
-    } else {
-      const updateFeedback = {
-        comments,
-        type,
-        hierarchy,
-        emailDraftTo: to,
-        from,
-        status: "Draft"
-      };
-
-      Feedback.findByIdAndUpdate(
-        { _id: id },
-        { $set: updateFeedback },
-        { new: true }
-      )
-        .then(feedback => {
-          req.flash("success", "Your draft has updated saved.");
-          res.redirect("/inbox");
-        })
-        .catch();
-      return;
-    }
   }
+});
 
+router.post("/draft", (req, res, next) => {  
+  const { comments, type, hierarchy, to } = req.body;
+  const from = req.user._id;
+  const id = req.body._id;
+
+  if (id == undefined) {
+    const newFeedback = new Feedback({
+      comments,
+      type,
+      hierarchy,
+      emailDraftTo: to,
+      from,
+      status: "Draft"
+    });
+
+    newFeedback
+      .save()
+      .then(feedback => {
+        req.flash("success", "Your draft has been saved.");
+        res.redirect("/inbox");
+      })
+      .catch(err => {
+        throw new Error(err);
+      });
+    return;
+  } else {
+    const updateFeedback = {
+      comments,
+      type,
+      hierarchy,
+      emailDraftTo: to,
+      from,
+      status: "Draft"
+    };
+
+    Feedback.findByIdAndUpdate(
+      { _id: id },
+      { $set: updateFeedback },
+      { new: true }
+    )
+      .then(feedback => {
+        req.flash("success", "Your update has been saved.");
+        res.redirect("/inbox");
+      })
+      .catch();
+  }
+});
+
+router.post("/send", (req, res, next) => {
   const { comments, hierarchy, to } = req.body;
 
   req.body.type == null ? (type = "Signed") : (type = "Anonymous");
@@ -90,7 +105,7 @@ router.post("/create", (req, res, next) => {
   if (comments == "" || to == "") {
     req.flash(
       "error",
-      "In order to send your feedback we need a that the recipient and comment to be filled."
+      "In order to send your feedback we need the recipient and comment to be filled."
     );
 
     res.render("feedbacks/new", {
@@ -148,24 +163,24 @@ router.post("/create", (req, res, next) => {
                   throw new Error(err);
                 });
             } else {
-
               newFeedback.to = userTo._id;
-                newFeedback.save()
-                  .then(feedback => {
-                    if (userTo.status == "Pending") {
-                      req.flash(
-                        "success",
-                        "The user does not exist. But we have storage your feedback."
-                      );
-                      res.redirect("/inbox");
-                    }
-
-                    req.flash("success", "Your feedback has been send.");
+              newFeedback
+                .save()
+                .then(feedback => {
+                  if (userTo.status == "Pending") {
+                    req.flash(
+                      "success",
+                      "The user does not exist. But we have storage your feedback."
+                    );
                     res.redirect("/inbox");
-                  })
-                  .catch(err => {
-                    throw new Error(err);
-                  });
+                  }
+
+                  req.flash("success", "Your feedback has been send.");
+                  res.redirect("/inbox");
+                })
+                .catch(err => {
+                  throw new Error(err);
+                });
             }
           })
           .catch();
@@ -235,65 +250,87 @@ router.post("/create", (req, res, next) => {
 
 router.get("/", (req, res, next) => {
   var currentUser = req.user._id;
-  Feedback.find({ $and: [{to: currentUser}, {toDiscardedStatus: false}, { $or :[{status: "Delivered"}, {status:"Accepted"}, {status:"Read"}]}]})
-    .populate('from')
-    .then(feedback =>{
+  Feedback.find({
+    $and: [
+      { to: currentUser },
+      { toDiscardedStatus: false },
+      {
+        $or: [
+          { status: "Delivered" },
+          { status: "Accepted" },
+          { status: "Read" }
+        ]
+      }
+    ]
+  })
+    .populate("from")
+    .then(feedback => {
       // res.send(feedback);
-      res.render("inbox", {feedback: feedback});
+      res.render("inbox", { feedback: feedback,
+        error: req.flash("error"),
+        success: req.flash("success")
+         });
     })
     .catch(error => {
-			console.log(error);
-		});
-	
-})
+      console.log(error);
+    });
+});
 
 router.post("/discard", (req, res, next) => {
   let feedbackId = req.body.id;
-  Feedback.findByIdAndUpdate({ _id: feedbackId }, {$set: {toDiscardedStatus: true}})
-  .then(feedback => {
-    res.redirect("/inbox")
-  })
-  .catch(err => {
-    throw new Error(err);
-  })
-});
-
-router.post("/accept", (req, res, next) => {
-  let feedbackId = req.body.id;
-  Feedback.findByIdAndUpdate({ _id: feedbackId }, {$set: {status: "Accepted"}})
-  .then(feedback => {
-    res.redirect("/inbox")
-  })
-  .catch(err => {
-    throw new Error(err);
-  })
-});
-
-router.post("/refuse", (req, res, next) => {
-  let feedbackId = req.body.id;
-  Feedback.findByIdAndUpdate({ _id: feedbackId }, {$set: {status: "Refused"}})
-  .then(feedback => {
-    res.redirect("/inbox")
-  })
-  .catch(err => {
-    throw new Error(err);
-  })
-});
-
-
-
-
-router.get("/:feedbackId", (req, res, next) => {
-  Feedback.findById(req.params.feedbackId)
+  Feedback.findByIdAndUpdate(
+    { _id: feedbackId },
+    { $set: { toDiscardedStatus: true } }
+  )
     .then(feedback => {
-      if (feedback.to == req.user.id) {
-        res.render("feedbacks/detail", { feedback: feedback, to: feedback.emailDrafTo});
-      }
+      res.redirect("/inbox");
     })
     .catch(err => {
       throw new Error(err);
     });
 });
 
+router.post("/accept", (req, res, next) => {
+  let feedbackId = req.body.id;
+  Feedback.findByIdAndUpdate(
+    { _id: feedbackId },
+    { $set: { status: "Accepted" } }
+  )
+    .then(feedback => {
+      res.redirect("/inbox");
+    })
+    .catch(err => {
+      throw new Error(err);
+    });
+});
+
+router.post("/refuse", (req, res, next) => {
+  let feedbackId = req.body.id;
+  Feedback.findByIdAndUpdate(
+    { _id: feedbackId },
+    { $set: { status: "Refused" } }
+  )
+    .then(feedback => {
+      res.redirect("/inbox");
+    })
+    .catch(err => {
+      throw new Error(err);
+    });
+});
+
+router.get("/:feedbackId", (req, res, next) => {
+  Feedback.findById(req.params.feedbackId)
+    .then(feedback => {
+      if (feedback.to == req.user.id) {
+        res.render("feedbacks/detail", {
+          feedback: feedback,
+          to: feedback.emailDrafTo
+        });
+      }
+    })
+    .catch(err => {
+      throw new Error(err);
+    });
+});
 
 module.exports = router;
