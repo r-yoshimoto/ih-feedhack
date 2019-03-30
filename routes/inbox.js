@@ -7,13 +7,6 @@ const app = express();
 
 app.use(ensureLogin.ensureLoggedIn());
 
-// router.get("/", (req, res, next) => {
-//   res.render("inbox", {
-//     error: req.flash("error"),
-//     success: req.flash("success")
-//   });
-// });
-
 router.get("/create", (req, res, next) => {
   res.render("feedbacks/new");
 });
@@ -265,11 +258,22 @@ router.get("/", (req, res, next) => {
   })
     .populate("from")
     .then(feedback => {
-      // res.send(feedback);
-      res.render("inbox", { feedback: feedback,
+    
+      if (feedback.length == 0) {
+        res.locals.currentUser.counter = false;
+      } else if (feedback.length < 10) {
+        res.locals.currentUser.counter = feedback.length;
+      } else {
+        res.locals.currentUser.counter = "●";
+      }
+
+      res.render("inbox", {
+        feedback: feedback,
         error: req.flash("error"),
         success: req.flash("success")
          });
+
+
     })
     .catch(error => {
       console.log(error);
@@ -320,12 +324,11 @@ router.post("/refuse", (req, res, next) => {
 
 router.get("/:feedbackId", (req, res, next) => {
   Feedback.findById(req.params.feedbackId)
-    .populate('from')
     .then(feedback => {
       if (feedback.to == req.user.id) {
         res.render("feedbacks/detail", {
           feedback: feedback,
-          to: feedback.emailDraftTo
+          to: feedback.emailDrafTo
         });
       }
     })
