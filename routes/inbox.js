@@ -260,12 +260,14 @@ router.get("/", (req, res, next) => {
     .then(feedback => {
     
       if (feedback.length == 0) {
-        req.app.locals.counter = false;
+        req.session.counter = false;
       } else if (feedback.length < 10) {
-        req.app.locals.counter = feedback.length;
+        req.session.counter = feedback.length;
       } else {
-        req.app.locals.counter = "●";
+        req.session.counter = "●";
       }
+      
+      res.locals.counter = req.session.counter
 
       res.render("inbox", {
         feedback: feedback,
