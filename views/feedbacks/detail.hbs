@@ -16,7 +16,7 @@
 
     {{#ifisAnonymous type}}
 
-    <label for="to">From an Anonymous</label>
+    <label for="to">From Anonymous</label>
     {{else}}
     <label for="to">Signed by {{from.fullName}}</label>
 
@@ -46,7 +46,7 @@
     <label class="form-check-label" for="exampleCheck1">Send as anonymous</label>
   </div> --}}
 </form>
-<form action="/inbox/discard" method="POST">
+<form class="col-md-6 offset-md-3" action="/inbox/discard" method="POST">
 <input type="hidden" name="id" value="{{_id}}">
 <button type="submit" class="btn btn-danger btn-sm">Discard</button>
 </form>
