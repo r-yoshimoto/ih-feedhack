@@ -260,11 +260,11 @@ router.get("/", (req, res, next) => {
     .then(feedback => {
     
       if (feedback.length == 0) {
-        res.locals.currentUser.counter = false;
+        req.app.locals.counter = false;
       } else if (feedback.length < 10) {
-        res.locals.currentUser.counter = feedback.length;
+        req.app.locals.counter = feedback.length;
       } else {
-        res.locals.currentUser.counter = "●";
+        req.app.locals.counter = "●";
       }
 
       res.render("inbox", {
