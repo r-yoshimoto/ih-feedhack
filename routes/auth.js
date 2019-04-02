@@ -42,18 +42,27 @@ router.get("/logout", ensureLogin.ensureLoggedIn(), (req, res) => {
   res.redirect("/login");
 });
 
-router.get("/sign-up", (req, res, next) => {
+router.get("/sign-up/", (req, res, next) => {
   if (req.user) {
     req.flash(
       "error",
       `You are already registered, but you can logout <a href="/logout?=fool">clicking here</a> and register with another e-mail.`
     );
     res.redirect("/inbox")};
-  
+ 
+    if(req.query.email) {
+      res.render("auth/invitation", {
+        error: req.flash("error"),
+        email: req.query.email,
+      });      
+    }
+
   res.render("auth/sign-up", {
-    error: req.flash("error")
+    error: req.flash("error"),
   });
+
 });
+
 
 router.post("/sign-up", (req, res, next) => {
   const { email, password, fullName } = req.body;
@@ -69,14 +78,50 @@ router.post("/sign-up", (req, res, next) => {
 
   User.findOne({ email: email })
     .then(user => {
-      if (user !== null) {
+      if (user.status == "Active") {
         req.flash(
           "error",
-          `This e-mail is already registered, if you lost you account <a href="#">click here</a> to recover it.`
+          `This e-mail is already registered, if you lost you account <a href="${process.env.APP_URI}/recover">click here</a> to recover it.`
         );
-        res.redirect("/sign-up");
+        res.redirect("/login");
 
         return;
+      } else if (user.status == "Pending"){  
+        const salt = bcrypt.genSaltSync(bcryptSalt);
+        const hashPass = bcrypt.hashSync(password, salt);
+  
+        const characters =
+          "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let emailConfirmationCode = "";
+        for (let i = 0; i < 25; i++) {
+          emailConfirmationCode +=
+            characters[Math.floor(Math.random() * characters.length)];
+        }
+
+        user.password = hashPass;
+        user.fullName = correctName(fullName);
+        user.emailConfirmationCode = emailConfirmationCode;
+        user.save().then(user => {
+          transporter
+            .sendMail({
+              from: "ih-feedback.herokuapp.com",
+              to: email,
+              subject: "Welcome to Feedback!",
+              html: `In order to use our app, please click <a href="${process.env.APP_URI}/confirm/${emailConfirmationCode}">here</a> to confirm your e-mail.
+              `
+            })
+            .then(info => console.log("nodemailer success -->", info))
+            .catch(error => console.log(error));
+
+          req.flash(
+            "success",
+            "Account created, we've send you a confirmation link to your e-mail. Welcome to Feedback!"
+          );
+          res.redirect("/login");
+        })
+        .catch(err => {
+          throw new Error(err);
+        })
       }
 
       const salt = bcrypt.genSaltSync(bcryptSalt);
@@ -413,7 +458,7 @@ router.post("/invite", (req,res,next) => {
           from: "ih-feedback.herokuapp.com",
           to: user.email,
           subject: "Your friend invited you to FEEDBACK!",
-          html: `To accept the invitation please click <a href="${process.env.APP_URI}/sign-up">here</a>
+          html: `To accept the invitation please click <a href="${process.env.APP_URI}/sign-up?${user.email}">here</a>
           <br> Your friend wrote: ${comment}`
         })
         .then(info => console.log("nodemailer success -->", info))
