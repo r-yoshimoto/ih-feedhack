@@ -385,8 +385,35 @@ router.get("/outbox/:feedbackId", (req, res, next) => {
     });
 });
 
+router.get("/draft", (req, res, next) => {
+  var currentUser = req.user._id;
+  Feedback.find({
+    $and: [
+      { from: currentUser },
+      { fromDiscardedStatus: false },
+      { status: "Draft" }
+    ]
+  })
+    .populate('to')
+    .then(feedback => {
+      // res.send(feedback);
+      res.render("draft", { feedback: feedback,
+        error: req.flash("error"),
+        success: req.flash("success")
+         });
+    })
+    .catch(error => {
+      console.log(error);
+    });
+});
+
+
 router.get("/:feedbackId", (req, res, next) => {
-  Feedback.findById(req.params.feedbackId)
+  let feedbackId = req.params.feedbackId;
+  Feedback.findByIdAndUpdate(
+    { _id: feedbackId },
+    { $set: { status: "Read" } }
+    )
     .then(feedback => {
       if (feedback.to == req.user.id) {
         res.render("feedbacks/detail", {
@@ -400,9 +427,7 @@ router.get("/:feedbackId", (req, res, next) => {
     });
 });
 
-// router.get("/outbox", (req, res, next) =>{
-//   res.render("outbox");
-// })
+
 
 
 
