@@ -1,0 +1,26 @@
+<form class="col-md-6 offset-md-3" id="form" action="/sign-up" method="POST">
+  <h1>Thank you for accepting the invitation!</h1>
+<p>You have been invited for this exceptional platform, where you can give and receive feedback - either doing it anonimously or not! We also have a community concil that will make sure your feedback have a positive impact, so let's write away!</p>
+
+  {{#if error}}
+  <div class="alert alert-danger">{{{ error }}}</div>
+  {{/if}}
+
+  <div class="form-group">
+    <label for="fullname">Full Name</label>
+    <input name="fullName" type="text" class="form-control" id="fullname" aria-describedby="fullnameHelp"
+      placeholder="Full Name">
+  </div>
+
+
+    <input type="hidden" name="email" type="email" class="form-control" id="email" placeholder="E-mail" value={{email}}>
+
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input name="password" type="password" class="form-control" id="password" placeholder="Password">
+  </div>
+
+  <button class="btn btn-primary">Sign Up</button>
+
+
+</form>
