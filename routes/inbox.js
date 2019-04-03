@@ -4,6 +4,7 @@ const ensureLogin = require("connect-ensure-login");
 const Feedback = require("../models/feedback");
 const User = require("../models/users");
 const app = express();
+const transporter = require("../services/nodemailer");
 
 app.use(ensureLogin.ensureLoggedIn());
 
@@ -115,7 +116,16 @@ router.post("/send", (req, res, next) => {
   const from = req.user._id;
   const id = req.body._id;
 
+  const characters =
+  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+let feedbackToken = "";
+for (let i = 0; i < 25; i++) {
+  feedbackToken +=
+    characters[Math.floor(Math.random() * characters.length)];
+}
+
   let newFeedback = new Feedback({
+    token: feedbackToken,
     emailDraftTo: "",
     comments,
     type,
@@ -142,9 +152,20 @@ router.post("/send", (req, res, next) => {
                   newFeedback
                     .save()
                     .then(feedback => {
+                      transporter
+                      .sendMail({
+                        from: "ih-feedback.herokuapp.com",
+                        to: userNew.email,
+                        subject: "You've received a Feedback!",
+                        html: `You are not registered on our platform, but you can <a href="${process.env.APP_URI}/feedback/?tokenId=${feedbackToken}">click here</a> to read your Feedback or use the following token (${feedbackToken}) on <a href="${process.env.APP_URI}/feedback/">this page</a>.
+                        `
+                      })
+                      .then(info => console.log("nodemailer success -->", info))
+                      .catch(error => console.log(error));
+
                       req.flash(
                         "success",
-                        "The user does not exist. But we have storage your feedback."
+                        "The user does not exist. We've sent it an e-mail with a code so he can read your Feedback."
                       );
                       res.redirect("/inbox");
                     })
@@ -161,9 +182,23 @@ router.post("/send", (req, res, next) => {
                 .save()
                 .then(feedback => {
                   if (userTo.status == "Pending") {
+
+                    transporter
+                    .sendMail({
+                      from: "ih-feedback.herokuapp.com",
+                      to: userTo.email,
+                      subject: "You've received a Feedback!",
+                      html: `You are not registered on our platform, but you can <a href="${process.env.APP_URI}/feedback/?tokenId=${feedbackToken}">click here</a> to read your Feedback or use the following token (${feedbackToken}) on <a href="${process.env.APP_URI}/feedback/">this page</a>.
+                      `
+                    })
+                    .then(info => console.log("nodemailer success -->", info))
+                    .catch(error => console.log(error));
+
+
+
                     req.flash(
                       "success",
-                      "The user does not exist. But we have storage your feedback."
+                      "The user does not exist. We've sent it an e-mail with a code so he can read your Feedback."
                     );
                     res.redirect("/inbox");
                   }
@@ -393,7 +428,6 @@ router.get("/:feedbackId", (req, res, next) => {
       if (feedback.to == req.user.id) {
         res.render("feedbacks/detail", {
           feedback: feedback,
-          to: feedback.emailDrafTo
         });
       }
     })

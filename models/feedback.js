@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const feedbackSchema = new Schema(
     {
+        token: String,
         comments: String,
         to: { type: Schema.Types.ObjectId, ref: 'User' },
         emailDraftTo: String,
