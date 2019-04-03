@@ -1,0 +1,17 @@
+<form class="col-md-6 offset-md-3" id="form" action="/feedback/" method="GET">
+  <h1>Read your personal Feedback!</h1>
+  <p>You can input your personal Feedback token to read your feedback without signing-up.</p>
+
+  {{#if error}}
+  <div class="alert alert-danger">{{ error }}</div>
+  {{/if}}
+
+  <div class="form-group">
+    <label for="token">Insert Token</label>
+    <input type="text" name="tokenId" class="form-control" placeholder="Personal Feedback Token">
+  </div>
+
+  <button class="btn btn-primary">Read Feedback</button>
+
+
+</form>

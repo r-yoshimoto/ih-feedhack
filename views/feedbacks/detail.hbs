@@ -41,15 +41,18 @@
     </select>
   </div>
 
-  {{!-- <div class="form-check">
-    <input {{#check type}}{{/check}} type="checkbox" class="form-check-input" value="Anonymous" name="type">
-    <label class="form-check-label" for="exampleCheck1">Send as anonymous</label>
-  </div> --}}
 </form>
+
+{{#if token}}
+<form class="col-md-6 offset-md-3">
+<a href="/" class="btn btn-primary btn-sm">Register today and start Feedbacking!!</a>
+</form>
+{{else}}
 <form class="col-md-6 offset-md-3" action="/inbox/discard" method="POST">
 <input type="hidden" name="id" value="{{_id}}">
 <button type="submit" class="btn btn-danger btn-sm">Discard</button>
 </form>
+{{/if}}
 
 {{/with}}
 
