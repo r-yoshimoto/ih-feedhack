@@ -1,71 +1,83 @@
 <div class="container">
   <div class="row">
-    <div class="col-2"><a href="/inbox"><h2>Inbox</h2></a></div>
-    <div class="col-2"><h2>Outbox</h2></div>
-    <div class="col-2"><a href="/inbox/draft"><h2>Draft</h2></a></div>
+    <div class="col-2"><a href="/inbox">
+        <h2>Inbox</h2>
+      </a></div>
+    <div class="col-2">
+      <h2>Outbox</h2>
+    </div>
+    <div class="col-2"><a href="/inbox/draft">
+        <h2>Draft</h2>
+      </a></div>
   </div>
 </div>
 
-  {{#if error}}
-  <div class="alert alert-danger">{{{ error }}}</div>
-  {{/if}}
+{{#if error}}
+<div class="alert alert-danger">{{{ error }}}</div>
+{{/if}}
 
-  {{#if success}}
-  <div class="alert alert-success">{{ success }}</div>
-  {{/if}}
+{{#if success}}
+<div class="alert alert-success">{{ success }}</div>
+{{/if}}
 
-{{#each feedback}}
-<div class="container">
-<div class="row">
-<p><a href="/inbox/outbox/{{_id}}">{{this.to.fullName}}  {{comments.[0]}}{{comments.[1]}}{{comments.[2]}}... {{this.status}}</a></p>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">To:</th>
+      <th scope="col">Message</th>
+      <th scope="col">Status</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    
+      {{#each feedback}}
+      <tr>
+      
+      <th scope="row"><a href="/inbox/outbox/{{_id}}">{{this.to.fullName}}</a></th>
+      <td><a href="/inbox/outbox/{{_id}}">{{comments.[0]}}{{comments.[1]}}{{comments.[2]}}...</a></td>
+      <td><a href="/inbox/outbox/{{_id}}">{{this.status}}</a></td>
+      <td><form action="/inbox/outbox/discard" method="POST">
+    <input type="hidden" name="id" value="{{_id}}">
+    <button type="submit" class="btn btn-danger btn-sm">Discard</button>
+  </form></td>
+      </tr>
+      {{/each}}
+    
+  </tbody>
+</table>
+
+
+
+{{!-- <div class="container">
+  {{#each feedback}}
+  <div class="row">
+    <a href="/inbox/outbox/{{_id}}">
+      <div class="col-3">
+        {{this.to.fullName}}
+      </div>
+      <div class="col-3">
+        {{comments.[0]}}{{comments.[1]}}{{comments.[2]}}...
+      </div>
+      <div class="col-3">
+        {{this.status}}
+      </div>
+    </a>
+    <div class="col-3">
+      <form action="/inbox/outbox/discard" method="POST">
+    <input type="hidden" name="id" value="{{_id}}">
+    <button type="submit" class="btn btn-danger btn-sm">Discard</button>
+  </form>
+    </div>
+    <div class="w-100"></div>
+  </div>
+  {{/each}}
+</div> --}}
+
+
+{{!-- <p><a href="/inbox/outbox/{{_id}}">{{this.to.fullName}}  {{comments.[0]}}{{comments.[1]}}{{comments.[2]}}... {{this.status}}</a></p>
 <form action="/inbox/outbox/discard" method="POST">
 <input type="hidden" name="id" value="{{_id}}">
 <button type="submit" class="btn btn-danger btn-sm">Discard</button>
-</form>
-</div>
-</div>
-
-{{/each}}
-
-
-{{!-- {{#each feedback}}
-<div class="container">
-<div class="row">
-{{#ifisDelivered this.status}}
-
-{{#ifisAnonymous this.type}}
-
-<p><a href="/feedback/{{_id}}">New feedback from Anonymous</a></p>
-{{else}}
-<p><a href="/feedback/{{_id}}">New feedback signed by {{this.from.fullName}}</a></p>
-
-{{/ifisAnonymous}}
-
-
-<form action="/inbox/accept" method="POST">
-<input type="hidden" name="id" value="{{_id}}">
-<button type="submit" class="btn btn-outline-success btn-sm">Accept</button>
-</form>
-
-<form action="/inbox/refuse" method="POST">
-<input type="hidden" name="id" value="{{_id}}">
-<button type="submit" class="btn btn-outline-danger btn-sm">Refuse</button>
-</form>
-
-{{else}}
-{{#ifisAnonymous this.type}}
-<p><a href="/inbox/{{_id}}">{{comments.[0]}}{{comments.[1]}}{{comments.[2]}}...from an Anonymous </a></p>
-{{else}}
-<p><a href="/inbox/{{_id}}">{{comments.[0]}}{{comments.[1]}}{{comments.[2]}}...signed by {{this.from.fullName}} </a></p>
-{{/ifisAnonymous}}
-
-<form action="/inbox/discard" method="POST">
-<input type="hidden" name="id" value="{{_id}}">
-<button type="submit" class="btn btn-danger btn-sm">Discard</button>
-</form>
-
-{{/ifisDelivered}}
-</div>
-</div>
-
-{{/each}} --}}
+</form> --}}
