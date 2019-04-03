@@ -29,12 +29,12 @@ router.get("/edit/:feedbackId", (req, res, next) => {
 router.post("/delete", (req, res, next) => {
   if (req.body._id == null) {
     req.flash("success", "Draft discarded.")
-    res.redirect("/inbox");
+    res.redirect("/inbox/draft");
   } else {
     Feedback.findByIdAndDelete(req.body._id)
       .then(feedback => {
         req.flash("success", "Your Feedback draft has been deleted.");
-        res.redirect("/inbox")
+        res.redirect("/inbox/draft")
       })
       .catch(err => {
         throw new Error(err);

@@ -18,10 +18,12 @@
 <div class="container">
 <div class="row">
 <p><a href="/inbox/edit/{{_id}}">{{this.to.fullName}}  {{comments.[0]}}{{comments.[1]}}{{comments.[2]}}... {{this.status}}</a></p>
-<form action="" method="POST">
-{{!-- <input type="hidden" name="id" value="{{_id}}"> --}}
-<button class="btn btn-danger btn-sm" id="button-delete">Delete</button>
+
+<form action="/inbox/delete" method="POST">
+<input type="hidden" name="_id" value="{{_id}}">
+<button type="submit" class="btn btn-danger btn-sm" >Delete</button>
 </form>
+
 </div>
 </div>
 
