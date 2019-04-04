@@ -99,10 +99,17 @@ router.post("/sign-up", (req, res, next) => {
             characters[Math.floor(Math.random() * characters.length)];
         }
 
-        user.password = hashPass;
-        user.fullName = correctName(fullName);
-        user.emailConfirmationCode = emailConfirmationCode;
-        user.save().then(user => {
+        let pendingUser = {
+        password: hashPass,
+        fullName: correctName(fullName),
+        emailConfirmationCode: emailConfirmationCode,
+        }
+
+        User.findByIdAndUpdate(
+          { _id: user._id }, 
+          { $set: pendingUser,
+        })
+        .then(user => {
           transporter
             .sendMail({
               from: "ih-feedback.herokuapp.com",

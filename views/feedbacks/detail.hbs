@@ -43,9 +43,9 @@
 
 </form>
 
-{{#if token}}
+{{#if ../tokenWeb}}
 <form class="col-md-6 offset-md-3">
-<a href="/" class="btn btn-primary btn-sm">Register today and start Feedbacking!!</a>
+<a href="/sign-up" class="btn btn-primary btn-sm">Register today and start Feedbacking!!</a>
 </form>
 {{else}}
 <form class="col-md-6 offset-md-3" action="/inbox/discard" method="POST">
