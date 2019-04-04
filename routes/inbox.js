@@ -124,7 +124,7 @@ for (let i = 0; i < 25; i++) {
     characters[Math.floor(Math.random() * characters.length)];
 }
 
-  let newFeedback = new Feedback({
+  let feedback = {
     token: feedbackToken,
     emailDraftTo: "",
     comments,
@@ -132,6 +132,10 @@ for (let i = 0; i < 25; i++) {
     hierarchy,
     from,
     status: "Delivered"
+  }
+
+  let newFeedback = new Feedback({
+    feedback
   });
 
   Feedback.findById(id)
@@ -223,14 +227,24 @@ for (let i = 0; i < 25; i++) {
               newUser
                 .save()
                 .then(userNew => {
-                  newFeedback.to = userNew._id;
+                  feedback.to = userNew._id;
 
                   Feedback.findByIdAndUpdate(
                     { _id: id },
-                    { $set: newFeedback },
+                    { $set: feedback },
                     { new: true }
                   )
                     .then(feedback => {
+
+                      transporter
+                      .sendMail({
+                        from: "ih-feedback.herokuapp.com",
+                        to: userNew.email,
+                        subject: "You've received a Feedback!",
+                        html: `You are not registered on our platform, but you can <a href="${process.env.APP_URI}/feedback/?tokenId=${feedbackToken}">click here</a> to read your Feedback or use the following token (${feedbackToken}) on <a href="${process.env.APP_URI}/feedback/">this page</a>.
+                        `
+                      })
+
                       req.flash(
                         "success",
                         "The user does not exist. But we have storage your feedback."
@@ -245,14 +259,25 @@ for (let i = 0; i < 25; i++) {
                   throw new Error(err);
                 });
             } else {
-              (newFeedback.to = userTo._id),
+              (feedback.to = userTo._id),
                 Feedback.findByIdAndUpdate(
                   { _id: id },
-                  { $set: newFeedback },
+                  { $set: feedback },
                   { new: true }
                 )
                   .then(feedback => {
                     if (userTo.status == "Pending") {
+
+
+                      transporter
+                      .sendMail({
+                        from: "ih-feedback.herokuapp.com",
+                        to: userTo.email,
+                        subject: "You've received a Feedback!",
+                        html: `You are not registered on our platform, but you can <a href="${process.env.APP_URI}/feedback/?tokenId=${feedbackToken}">click here</a> to read your Feedback or use the following token (${feedbackToken}) on <a href="${process.env.APP_URI}/feedback/">this page</a>.
+                        `
+                      })
+
                       req.flash(
                         "success",
                         "The user does not exist. But we have storage your feedback."
