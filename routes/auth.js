@@ -78,6 +78,7 @@ router.post("/sign-up", (req, res, next) => {
 
   User.findOne({ email: email })
     .then(user => {
+      if (user !== null) {
       if (user.status == "Active") {
         req.flash(
           "error",
@@ -123,6 +124,7 @@ router.post("/sign-up", (req, res, next) => {
           throw new Error(err);
         })
       }
+    }
 
       const salt = bcrypt.genSaltSync(bcryptSalt);
       const hashPass = bcrypt.hashSync(password, salt);
