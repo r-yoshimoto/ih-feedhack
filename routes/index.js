@@ -15,10 +15,11 @@ router.get("/feedback", (req, res, next) => {
   }
 
   Feedback.findOneAndUpdate({token: req.query.tokenId}, { $set: { status: "Read" } })
-    .then(feedback => {
+  .populate('from')  
+  .then(feedback => {
         res.render("feedbacks/detail", {
           feedback: feedback,
-          token: true,
+          tokenWeb: true,
         });
       
     })
@@ -27,20 +28,5 @@ router.get("/feedback", (req, res, next) => {
     });
 });
 
-router.post("/feedback/read", (req, res, next) => {
-  let feedbackId = req.body.id;
-  Feedback.findByIdAndUpdate(
-    { _id: feedbackId },
-    { $set: { status: "Read" } }
-  )
-    .then(feedback => {
-      req.flash("success", "The Feedback has been marked as read.")
-      res.redirect("/login");
-    })
-    .catch(err => {
-      throw new Error(err);
-    });
-
-})
 
 module.exports = router;
