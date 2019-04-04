@@ -35,7 +35,7 @@
       {{#each feedback}}
       <tr>
       
-      <th scope="row"><a href="/inbox/outbox/{{_id}}">{{this.to.fullName}}</a></th>
+      <th scope="row"><a href="/inbox/outbox/{{_id}}">{{this.to.email}}</a></th>
       <td><a href="/inbox/outbox/{{_id}}">{{comments.[0]}}{{comments.[1]}}{{comments.[2]}}...</a></td>
       <td><a href="/inbox/outbox/{{_id}}">{{this.status}}</a></td>
       <td><form action="/inbox/outbox/discard" method="POST">

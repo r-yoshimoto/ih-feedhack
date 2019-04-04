@@ -16,10 +16,10 @@
 
     {{#ifisAnonymous type}}
 
-    <label for="to">From Anonymous</label>
+    <label for="from">From Anonymous</label>
     {{else}}
-    <label for="to">Signed by {{from.fullName}}</label>
-
+    <label for="from">Signed by {{from.fullName}}</label><br>
+    <label for="email">Email: {{from.email}}</label>
      {{/ifisAnonymous}}
   </div>
 
@@ -55,6 +55,12 @@
 {{/if}}
 
 {{/with}}
+
+<div class="container">
+  <div class="row">
+    <div class="col-2"><a href="/inbox"><h3>Return to Inbox</h3></a></div>
+    </div>
+</div>
 
 
 

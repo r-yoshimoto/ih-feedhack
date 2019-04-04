@@ -412,8 +412,8 @@ router.get("/outbox/:feedbackId", (req, res, next) => {
       if (feedback.from == req.user.id) {
         
         res.render("feedbacks/detail-outbox", {
-          feedback: feedback,
-          to: feedback.emailDraftTo
+          feedback: feedback
+          // to: feedback.emailDraftTo
         });
       }
     })
@@ -431,7 +431,6 @@ router.get("/draft", (req, res, next) => {
       { status: "Draft" }
     ]
   })
-    .populate('to')
     .then(feedback => {
       // res.send(feedback);
       res.render("draft", { feedback: feedback,
@@ -451,6 +450,7 @@ router.get("/:feedbackId", (req, res, next) => {
     { _id: feedbackId },
     { $set: { status: "Read" } }
     )
+    .populate('from')
     .then(feedback => {
       if (feedback.to == req.user.id) {
         res.render("feedbacks/detail", {

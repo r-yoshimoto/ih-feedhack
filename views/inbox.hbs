@@ -14,8 +14,72 @@
   {{#if success}}
   <div class="alert alert-success">{{ success }}</div>
   {{/if}}
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">From:</th>
+      <th scope="col">Message</th>
+      <th scope="col">Status</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    
+      {{#each feedback}}
+      <tr>
+      {{#ifisDelivered this.status}}
+      
+      <th scope="row">
+       {{#ifisAnonymous this.type}}
+       New feedback from Anonymous
+       {{else}}
+       New feedback signed by {{this.from.fullName}}
+      {{/ifisAnonymous}}
+      </th>
+      
+      <td></td>
+      <td></td>
+      
+      <td>
+        <form action="/inbox/accept" id="accept-refuse" method="POST">
+        <input type="hidden" name="id" value="{{_id}}">
+        <button type="submit" class="btn btn-outline-success btn-sm">Accept</button>
+        </form>
+        <form action="/inbox/refuse" id="accept-refuse" method="POST">
+        <input type="hidden" name="id" value="{{_id}}">
+        <button type="submit" class="btn btn-outline-danger btn-sm">Refuse</button>
+        </form>
+      </td>
+
+      {{else}}
+      
+      
+      <th scope="row">
+      {{#ifisAnonymous this.type}}
+       <a href="/inbox/{{_id}}">Anonymous</a>
+       {{else}}
+       <a href="/inbox/{{_id}}">{{this.from.email}}</a>
+       {{/ifisAnonymous}}
+      </th>
+      
+
+      <td><a href="/inbox/{{_id}}">{{comments.[0]}}{{comments.[1]}}{{comments.[2]}}...</a></td>
+      
+      <td><a href="/inbox/{{_id}}">{{this.status}}</a></td>
+      
+      <td><form action="/inbox/outbox/discard" method="POST">
+      <input type="hidden" name="id" value="{{_id}}">
+      <button type="submit" class="btn btn-danger btn-sm">Discard</button>
+      </form></td>
+      {{/ifisDelivered}}
+      </tr>
+      {{/each}}
+    
+  </tbody>
+</table>
   
-{{#each feedback}}
+{{!-- {{#each feedback}}
 <div class="container">
 <div class="row">
 {{#ifisDelivered this.status}}
@@ -55,7 +119,33 @@
 </div>
 </div>
 
-{{/each}}
+{{/each}} --}}
+
+{{!-- <table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">From:</th>
+      <th scope="col">Message</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    
+      {{#each feedback}}
+      <tr>
+      
+      <th scope="row"><a href="/inbox/outbox/{{_id}}">{{this.to.email}}</a></th>
+      <td><a href="/inbox/outbox/{{_id}}">{{comments.[0]}}{{comments.[1]}}{{comments.[2]}}...</a></td>
+      <td><a href="/inbox/outbox/{{_id}}">{{this.status}}</a></td>
+      <td><form action="/inbox/outbox/discard" method="POST">
+    <input type="hidden" name="id" value="{{_id}}">
+    <button type="submit" class="btn btn-danger btn-sm">Discard</button>
+  </form></td>
+      </tr>
+      {{/each}}
+    
+  </tbody>
+</table> --}}
 
 
 
