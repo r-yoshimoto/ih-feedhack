@@ -124,7 +124,7 @@ for (let i = 0; i < 25; i++) {
     characters[Math.floor(Math.random() * characters.length)];
 }
 
-  let feedback = {
+  let oldFeedback = {
     token: feedbackToken,
     emailDraftTo: "",
     comments,
@@ -135,7 +135,13 @@ for (let i = 0; i < 25; i++) {
   }
 
   let newFeedback = new Feedback({
-    feedback
+    token: feedbackToken,
+    emailDraftTo: "",
+    comments,
+    type,
+    hierarchy,
+    from,
+    status: "Delivered"
   });
 
   Feedback.findById(id)
@@ -227,11 +233,11 @@ for (let i = 0; i < 25; i++) {
               newUser
                 .save()
                 .then(userNew => {
-                  feedback.to = userNew._id;
+                  oldFeedback.to = userNew._id;
 
                   Feedback.findByIdAndUpdate(
                     { _id: id },
-                    { $set: feedback },
+                    { $set: oldFeedback },
                     { new: true }
                   )
                     .then(feedback => {
@@ -259,10 +265,10 @@ for (let i = 0; i < 25; i++) {
                   throw new Error(err);
                 });
             } else {
-              (feedback.to = userTo._id),
+              (oldFeedback.to = userTo._id),
                 Feedback.findByIdAndUpdate(
                   { _id: id },
-                  { $set: feedback },
+                  { $set: oldFeedback },
                   { new: true }
                 )
                   .then(feedback => {
