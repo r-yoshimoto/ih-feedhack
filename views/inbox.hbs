@@ -42,14 +42,16 @@
       <td></td>
       
       <td>
-        <form action="/inbox/accept" id="accept-refuse" method="POST">
+        <div class="row"><form action="/inbox/accept" id="accept-refuse" method="POST">
         <input type="hidden" name="id" value="{{_id}}">
         <button type="submit" class="btn btn-outline-success btn-sm">Accept</button>
         </form>
+        &nbsp
         <form action="/inbox/refuse" id="accept-refuse" method="POST">
         <input type="hidden" name="id" value="{{_id}}">
         <button type="submit" class="btn btn-outline-danger btn-sm">Refuse</button>
         </form>
+        </div>
       </td>
 
       {{else}}
@@ -63,15 +65,19 @@
        {{/ifisAnonymous}}
       </th>
       
+      <td><a href="/inbox/{{_id}}">{{trimString comments 0 10}}</a></td>
 
-      <td><a href="/inbox/{{_id}}">{{comments.[0]}}{{comments.[1]}}{{comments.[2]}}...</a></td>
+      {{!-- <td><a href="/inbox/{{_id}}">{{comments.[0]}}{{comments.[1]}}{{comments.[2]}}...</a></td> --}}
       
       <td><a href="/inbox/{{_id}}">{{this.status}}</a></td>
       
-      <td><form action="/inbox/outbox/discard" method="POST">
+      <td>
+      <div class="row"><form action="/inbox/discard" method="POST">
       <input type="hidden" name="id" value="{{_id}}">
       <button type="submit" class="btn btn-danger btn-sm">Discard</button>
-      </form></td>
+      </form>
+      </div>
+      </td>
       {{/ifisDelivered}}
       </tr>
       {{/each}}

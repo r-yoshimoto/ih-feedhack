@@ -36,7 +36,7 @@
       <tr>
       
       <th scope="row"><a href="/inbox/outbox/{{_id}}">{{this.to.email}}</a></th>
-      <td><a href="/inbox/outbox/{{_id}}">{{comments.[0]}}{{comments.[1]}}{{comments.[2]}}...</a></td>
+      <td><a href="/inbox/outbox/{{_id}}">{{trimString comments 0 10}}</a></td>
       <td><a href="/inbox/outbox/{{_id}}">{{this.status}}</a></td>
       <td><form action="/inbox/outbox/discard" method="POST">
     <input type="hidden" name="id" value="{{_id}}">

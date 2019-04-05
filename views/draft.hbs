@@ -30,7 +30,7 @@
       <tr>
       
       <th scope="row"><a href="/inbox/edit/{{_id}}">{{this.emailDraftTo}}</a></th>
-      <td><a href="/inbox/edit/{{_id}}">{{comments.[0]}}{{comments.[1]}}{{comments.[2]}}...</a></td>
+      <td><a href="/inbox/edit/{{_id}}">{{trimString comments 0 10}}</a></td>
       <td><a href="/inbox/edit/{{_id}}">{{this.status}}</a></td>
       <td>
         <form action="/inbox/delete" method="POST">

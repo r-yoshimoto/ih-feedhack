@@ -148,6 +148,10 @@ span.nav-link{
   color: #000000;
 }
 
+.italic{
+  font-style: italic;
+}
+
 /* #accept-refuse{
   margin: 0px;
   width: auto;
