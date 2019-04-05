@@ -38,7 +38,15 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(passport)
 
-
+hbs.registerHelper('trimString', function(passedString, startstring, endstring) {
+  if(passedString.length < endstring){
+    var theString = passedString.substring( startstring, endstring );
+  }
+  else{
+    var theString = passedString.substring( startstring, endstring ) + "...";
+  }
+  return new hbs.SafeString(theString)
+});
 
 hbs.registerHelper('ifisDelivered', function(value, options) {
   if(value == "Delivered") {
