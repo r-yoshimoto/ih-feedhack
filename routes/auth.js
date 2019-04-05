@@ -42,7 +42,7 @@ router.get("/logout", ensureLogin.ensureLoggedIn(), (req, res) => {
   res.redirect("/login");
 });
 
-router.get("/sign-up/", (req, res, next) => {
+router.get("/sign-up", (req, res, next) => {
   if (req.user) {
     req.flash(
       "error",
@@ -467,7 +467,7 @@ router.post("/invite", (req,res,next) => {
           from: "ih-feedback.herokuapp.com",
           to: user.email,
           subject: "Your friend invited you to FEEDBACK!",
-          html: `To accept the invitation please click <a href="${process.env.APP_URI}/sign-up?${user.email}">here</a>
+          html: `To accept the invitation please click <a href="${process.env.APP_URI}/sign-up?email=${user.email}">here</a>
           <br> Your friend wrote: ${comment}`
         })
         .then(info => console.log("nodemailer success -->", info))
