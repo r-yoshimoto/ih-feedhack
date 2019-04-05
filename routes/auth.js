@@ -264,7 +264,7 @@ router.post("/recover", (req, res, next) => {
         req.flash("success", "An e-mail with instruction have been send!");
         res.redirect("/login");
       } else {
-        req.flash("error", "E-mail not found.");
+        req.flash("error", "If we find your register on our platform, you should receive an e-mail to recover your password.");
         res.redirect("/recover");
       }
     })
