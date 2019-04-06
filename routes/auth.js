@@ -451,7 +451,7 @@ router.get("/invite", (req, res, next) => {
 
 router.post("/invite", (req,res,next) => {
   let {emailList, comment} = req.body
- 
+  var currentUser = req.user.fullName;
   emailList.split(',').forEach(email => {
     User.findOne({email: email}).then(user => {
       if (user == null) {
@@ -466,8 +466,9 @@ router.post("/invite", (req,res,next) => {
         .sendMail({
           from: "ih-feedback.herokuapp.com",
           to: user.email,
-          subject: "Your friend invited you to FEEDBACK!",
-          html: `To accept the invitation please click <a href="${process.env.APP_URI}/sign-up?email=${user.email}">here</a>
+          subject: `Your friend ${currentUser} invited you to FEEDBACK`,
+          html: `Feedback is a new platform of feedback. Here, you can feedback not only your coworkers, but also your friends, family and business connections.
+          <br>To accept the invitation please click <a href="${process.env.APP_URI}/sign-up?email=${user.email}">here</a>
           <br> Your friend wrote: ${comment}`
         })
         .then(info => console.log("nodemailer success -->", info))
