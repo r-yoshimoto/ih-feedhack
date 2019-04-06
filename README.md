@@ -15,7 +15,7 @@ Necessary mongodb in order to store dta.
 
 First, you need to sign up in the platform. After confirming your account by e-mail, you can send your feedback.
 You can send feedbacks to users which are not registered in the database. They can view the feedback using a token without registration.
-There are a inbox, outbox and draft tabs similar to a e-mail account.
+There are inbox, outbox and draft tabs similar to a e-mail account.
 You can also invite your friends to join the platform.
 
 
