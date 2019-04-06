@@ -1,6 +1,6 @@
-<h1></h1>
-
 <form class="col-md-6 offset-md-3" id="form" action="" method="POST">
+
+<h1>Feedback Detail</h1>
   
 
   {{#if error}}
@@ -50,17 +50,12 @@
 {{else}}
 <form class="col-md-6 offset-md-3" action="/inbox/discard" method="POST">
 <input type="hidden" name="id" value="{{_id}}">
-<button type="submit" class="btn btn-danger btn-sm">Discard</button>
+<button type="submit" class="btn btn-danger">Discard</button>
+<a href="/inbox" class="btn btn-primary">Return to Inbox</a>
+  
 </form>
 {{/if}}
 
 {{/with}}
-
-<div class="container">
-  <div class="row">
-    <div class="col-2"><a href="/inbox"><h3>Return to Inbox</h3></a></div>
-    </div>
-</div>
-
 
 
