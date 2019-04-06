@@ -21,7 +21,8 @@ You can also invite your friends to join the platform.
 
 ## Technologies and approach
 
-XXX
+
+MongoDB, mongoose, passport, express, node, bootstrap, jquery, bodyparser, handlebars packages.
 
 
 ## Unsolved problems/Future development
