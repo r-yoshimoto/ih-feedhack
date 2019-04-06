@@ -8,7 +8,7 @@ Feedback is platform where you send feedbacks not only to coworkers, but also to
 All files must be in the same folder.
 Design won't load without a internet connection (Bootstrap front-end).
 Necessary email service in order to send e-mails to users.
-Necessary mongodb in order to store dta.
+Necessary mongodb in order to store data.
 
 
 ## How to use
