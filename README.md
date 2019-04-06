@@ -16,26 +16,21 @@ Necessary mongodb in order to store dta.
 First, you need to sign up in the platform. After confirming your account by e-mail, you can send your feedback.
 You can send feedbacks to users which are not registered in the database. They can view the feedback using a token without registration.
 There are a inbox, outbox and draft tabs similar to a e-mail account.
-You can also invite your 
+You can also invite your friends to join the platform.
 
-Each player alternately selects in which column want to add a piece, using button-clicks in the respective column.
-When there are 4 connected pieces of the same color, this player wins the game. When nobody achieves it, there is a tie.
-The keyboard can also be used to the play the game, in which each number corresponds to a column.
 
 ## Technologies and approach
 
-First, the game was built using only a matrix, with basic Javascript and some CSS (start-game button), without user interface, using keyboard commands.
-Second, a static user interface was devised using Canvas.
-After, animated falling pieces were added using Javascript animation.
-At last, click-buttons were added using CSS and Jquery.
+XXX
+
 
 ## Unsolved problems/Future development
 
-- Readen feedbacks unformatted.
+- Unformatted readen feedbacks.
 - Delivered feedbacks without date marks.
 - Not responsive design.
 - Delete user account not implemented.
-- New feedbacks counting all messages.
-- Sent email unformatted.
+- New feedbacks inbox counting all messages.
+- Unformatted sent email.
 
 
