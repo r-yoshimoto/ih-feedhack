@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const bcryptSalt = 10;
 const passport = require("passport");
 const User = require("../models/users");
+const Feedback = require ("../models/feedback")
 const transporter = require("../services/nodemailer");
 
 function correctName(fullName) {
@@ -67,8 +68,6 @@ router.get("/sign-up", (req, res, next) => {
 router.post("/sign-up", (req, res, next) => {
   const { email, password, fullName } = req.body;
 
-
-
   if (fullName == "" || email == "" || password == "") {
     res.render("auth/sign-up", {
       error: `Name, e-mail and password can't be empty.`
@@ -108,14 +107,28 @@ router.post("/sign-up", (req, res, next) => {
         User.findByIdAndUpdate(
           { _id: user._id }, 
           { $set: pendingUser,
-        })
+        },
+        {new: true})
         .then(user => {
-          transporter
+
+          const newFeedback = new Feedback({
+            comments: "Welcome to Feedback! We are glad that you decided to join our service. Please feel free to contact us for any feedback about Feedback (pun intended) @ ih.sao.nov18.feedback@gmail.com <br><br> Regards,<br> Feedhack<br> a Bocchi & Yoshimoto Company" ,
+            type: "Signed",
+            hierarchy: "Pair",
+            to: user._id,
+            status: "Accepted"
+          });
+
+          newFeedback
+          .save()
+          .then(feedback => {
+
+            transporter
             .sendMail({
               from: "ih-feedback.herokuapp.com",
-              to: email,
+              to: user.email,
               subject: "Welcome to Feedback!",
-              html: `In order to use our app, please click <a href="${process.env.APP_URI}/confirm/${emailConfirmationCode}">here</a> to confirm your e-mail.
+              html: `In order to use our app, please click <a href="${process.env.APP_URI}/confirm/${user.emailConfirmationCode}">here</a> to confirm your e-mail.
               `
             })
             .then(info => console.log("nodemailer success -->", info))
@@ -126,6 +139,11 @@ router.post("/sign-up", (req, res, next) => {
             "Account created, we've send you a confirmation link to your e-mail. Welcome to Feedback!"
           );
           res.redirect("/login");
+        })
+          .catch(err => {
+            throw new Error(err);
+          })
+
         })
         .catch(err => {
           throw new Error(err);
@@ -151,15 +169,27 @@ router.post("/sign-up", (req, res, next) => {
         emailConfirmationCode
       });
 
+      const newFeedback = new Feedback({
+        comments: "Welcome to Feedback! We are glad that you decided to join our service. Please feel free to contact us for any feedback about Feedback (pun intended) @ ih.sao.nov18.feedback@gmail.com <br><br> Regards,<br> Feedhack<br> a Bocchi & Yoshimoto Company" ,
+        type: "Signed",
+        hierarchy: "Pair",
+        to: user._id,
+        status: "Accepted"
+      });
+
       newUser
         .save()
         .then(user => {
-          transporter
+          newFeedback
+          .save()
+          .then(feedback => {
+            res.send(user)
+            transporter
             .sendMail({
               from: "ih-feedback.herokuapp.com",
-              to: email,
+              to: user.email,
               subject: "Welcome to Feedback!",
-              html: `In order to use our app, please click <a href="${process.env.APP_URI}/confirm/${emailConfirmationCode}">here</a> to confirm your e-mail.
+              html: `In order to use our app, please click <a href="${process.env.APP_URI}/confirm/${user.emailConfirmationCode}">here</a> to confirm your e-mail.
               `
             })
             .then(info => console.log("nodemailer success -->", info))
@@ -167,12 +197,15 @@ router.post("/sign-up", (req, res, next) => {
 
           req.flash(
             "success",
-            "Account created, we've send you a confirmation link to your e-mail."
+            "Account created, we've send you a confirmation link to your e-mail. Welcome to Feedback!"
           );
           res.redirect("/login");
         })
-        .catch(err => {
-          throw new Error(err);
+          .catch(err => {
+            throw new Error(err);
+          })
+
+        
         });
     })
     .catch(err => {
